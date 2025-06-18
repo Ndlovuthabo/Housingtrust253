@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Submission History - Global Property Sales</title>
+  <link rel="stylesheet" href="style.css" />
+  <script>
+    async function loadSubmissionHistory() {
+      const response = await fetch('backend/get_user_submissions.php');
+      const container = document.getElementById('submission-list');
+      if (!response.ok) {
+        container.textContent = 'Failed to load submission history.';
+        return;
+      }
+      const submissions = await response.json();
+      if (submissions.length === 0) {
+        container.textContent = 'You have not submitted any properties yet.';
+        return;
+      }
+
+      let html = '<table class="properties-table"><thead><tr><th>Title</th><th>Status</th><th>Submitted On</th><th>Actions</th></tr></thead><tbody>';
+      submissions.forEach(item => {
+        html += `
+          <tr>
+            <td>${item.title}</td>
+            <td>${item.status}</td>
+            <td>${new Date(item.created_at).toLocaleDateString()}</td>
+            <td>
+              <a href="edit_listing.html?id=${item.id}" class="btn-secondary">Edit</a>
+              <a href="delete_listing.php?id=${item.id}" class="btn-danger" onclick="return confirm('Are you sure?');">Delete</a>
+            </td>
+          </tr>
+        `;
+      });
+      html += '</tbody></table>';
+
+      container.innerHTML = html;
+    }
+
+    document.addEventListener('DOMContentLoaded', loadSubmissionHistory);
+  </script>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <h1 class="logo">🏠 Global Property Sales</h1>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="dashboard.html">Dashboard</a></li>
+          <li><a href="profile.html">Profile</a></li>
+          <li><a href="listings.html">All Listings</a></li>
+          <li><a href="submission_history.html" class="active">Submission History</a></li>
+          <li><a href="support.html">Support</a></li>
+          <li><a href="backend/logout.php">Logout</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="container">
+      <h2>Your Property Submission History</h2>
+      <div id="submission-list">Loading submissions...</div>
+    </section>
+  </main>
+
+  <footer class="footer container">
+    <p>© 2025 Global Property Sales Platform</p>
+  </footer>
+</body>
+</html>

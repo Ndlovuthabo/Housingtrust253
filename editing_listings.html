@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Edit Property Listing - Global Property Sales</title>
+  <link rel="stylesheet" href="style.css" />
+  <script>
+    let propertyId = null;
+    document.addEventListener('DOMContentLoaded', async () => {
+      const params = new URLSearchParams(window.location.search);
+      propertyId = params.get('id');
+      if (!propertyId) {
+        alert('No property ID specified.');
+        window.location.href = 'submission_history.html';
+        return;
+      }
+
+      const response = await fetch(`backend/get_listing.php?id=${propertyId}`);
+      if (!response.ok) {
+        alert('Failed to load property details.');
+        window.location.href = 'submission_history.html';
+        return;
+      }
+
+      const data = await response.json();
+      if (!data.id) {
+        alert('Property not found.');
+        window.location.href = 'submission_history.html';
+        return;
+      }
+
+      document.getElementById('title').value = data.title;
+      document.getElementById('price').value = data.price;
+      document.getElementById('location').value = data.location;
+      document.getElementById('description').value = data.description;
+    });
+
+    async function submitEdit(e) {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      formData.append('id', propertyId);
+
+      const response = await fetch('backend/edit_listing.php', {
+        method: 'POST',
+        body: formData
+      });
+
+      const text = await response.text();
+      const msg = document.getElementById('message');
+      if (response.ok) {
+        msg.style.color = 'green';
+        msg.textContent = text;
+      } else {
+        msg.style.color = 'red';
+        msg.textContent = text;
+      }
+    }
+  </script>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <h1 class="logo">🏠 Global Property Sales</h1>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="dashboard.html">Dashboard</a></li>
+          <li><a href="profile.html">Profile</a></li>
+          <li><a href="submission_history.html">Submission History</a></li>
+          <li><a href="listings.html">All Listings</a></li>
+          <li><a href="support.html">Support</a></li>
+          <li><a href="backend/logout.php">Logout</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="container form-section">
+      <h2>Edit Property Listing</h2>
+      <form id="editListingForm" onsubmit="submitEdit(event)" enctype="multipart/form-data

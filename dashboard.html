@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard - Global Property Sales</title>
+  <link rel="stylesheet" href="style.css" />
+  <script>
+    // Simple script to fetch and show user properties (will create backend API next)
+    async function loadProperties() {
+      const response = await fetch('backend/get_properties.php');
+      if (!response.ok) {
+        document.getElementById('properties-list').innerText = 'Failed to load properties.';
+        return;
+      }
+      const data = await response.json();
+      if (data.length === 0) {
+        document.getElementById('properties-list').innerText = 'No properties listed yet.';
+        return;
+      }
+
+      let html = '<table class="properties-table"><thead><tr><th>Title</th><th>Status</th><th>Price (USD)</th><th>Actions</th></tr></thead><tbody>';
+      data.forEach(p => {
+        html += `<tr>
+          <td>${p.title}</td>
+          <td>${p.status}</td>
+          <td>$${p.price}</td>
+          <td>
+            <a href="edit_listing.html?id=${p.id}" class="btn-secondary">Edit</a>
+            <a href="delete_listing.php?id=${p.id}" class="btn-danger" onclick="return confirm('Are you sure?');">Delete</a>
+          </td>
+        </tr>`;
+      });
+      html += '</tbody></table>';
+      document.getElementById('properties-list').innerHTML = html;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadProperties();
+    });
+  </script>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <h1 class="logo">🏠 Global Property Sales</h1>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="dashboard.html" class="active">Dashboard</a></li>
+          <li><a href="profile.html">Profile</a></li>
+          <li><a href="listings.html">All Listings</a></li>
+          <li><a href="support.html">Support</a></li>
+          <li><a href="backend/logout.php">Logout</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="container">
+      <h2>Welcome, <span id="user-name"></span></h2>
+
+      <div class="dashboard-section">
+        <h3>Your Property Listings</h3>
+        <div id="properties-list">Loading properties...</div>
+      </div>
+
+      <div class="dashboard-section">
+        <h3>Earnings</h3>
+        <p>$0.00 (Feature coming soon)</p>
+      </div>
+
+      <div class="dashboard-section">
+        <a href="register.html" class="btn-primary">Add New Property</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer container">
+    <p>© 2025 Global Property Sales Platform</p>
+  </footer>
+
+  <script>
+    // Display logged in user's name
+    fetch('backend/get_user_info.php')
+      .then(res => res.json())
+      .then(data => {
+        if(data.fullname){
+          document.getElementById('user-name').textContent = data.fullname;
+        } else {
+          window.location.href = 'login.html'; // Redirect if not logged in
+        }
+      })
+      .catch(() => window.location.href = 'login.html');
+  </script>
+</body>
+</html>

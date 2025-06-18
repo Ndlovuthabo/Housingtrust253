@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Panel - Global Property Sales</title>
+  <link rel="stylesheet" href="style.css" />
+
+  
+  <script>
+    async function loadPendingListings() {
+      const response = await fetch('backend/get_pending_listings.php');
+      const container = document.getElementById('pending-listings');
+      if (!response.ok) {
+        container.textContent = 'Failed to load pending listings.';
+        return;
+      }
+      const listings = await response.json();
+      if (listings.length === 0) {
+        container.textContent = 'No pending listings for review.';
+        return;
+      }
+      let html = '<table class="properties-table"><thead><tr><th>Title</th><th>Seller</th><th>Submitted On</th><th>Actions</th></tr></thead><tbody>';
+      listings.forEach(item => {
+        html += `
+          <tr>
+            <td>${item.title}</td>
+            <td>${item.seller}</td>
+            <td>${new Date(item.created_at).toLocaleDateString()}</td>
+            <td>
+              <button onclick="updateStatus(${item.id}, 'approved')" class="btn-primary">Approve</button>
+              <button onclick="updateStatus(${item.id}, 'rejected')" class="btn-danger">Reject</button>
+              <a href="edit_listing.html?id=${item.id}" class="btn-secondary">Edit</a>
+            </td>
+          </tr>
+        `;
+      });
+      html += '</tbody></table>';
+      container.innerHTML = html;
+    }
+
+    async function updateStatus(id, status) {
+      if (!confirm(`Are you sure you want to ${status} this listing?`)) return;
+
+      const response = await fetch('backend/update_listing_status.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({id, status})
+      });
+
+      if (response.ok) {
+        alert('Status updated successfully.');
+        loadPendingListings();
+      } else {
+        alert('Failed to update status.');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadPendingListings);
+  </script>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <h1 class="logo">🏠 Global Property Sales Admin</h1>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="admin.html" class="active">Pending Listings</a></li>
+          <li><a href="support_requests.html">Support Requests</a></li>
+          <li><a href="backend/logout.php">Logout</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="container">
+      <h2>Pending Listings for Review</h2>
+      <div id="pending-listings">Loading pending listings...</div>
+    </section>
+  </main>
+
+  <footer class="footer container">
+    <p>© 2025 Global Property Sales Platform</p>
+  </footer>
+</body>
+</html>

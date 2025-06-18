@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Register - Global Property Sales</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <h1 class="logo">🏠 Global Property Sales</h1>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="login.html">Login</a></li>
+          <li><a href="register.html" class="active">Register</a></li>
+          <li><a href="listings.html">View Listings</a></li>
+          <li><a href="support.html">Support</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="container form-section">
+      <h2>Seller Registration & Property Upload</h2>
+      <form action="backend/register_property.php" method="POST" enctype="multipart/form-data" id="registerForm">
+        <fieldset>
+          <legend>Personal Details</legend>
+          <label for="fullname">Full Name *</label>
+          <input type="text" id="fullname" name="fullname" required />
+
+          <label for="email">Email *</label>
+          <input type="email" id="email" name="email" required />
+
+          <label for="password">Password *</label>
+          <input type="password" id="password" name="password" required minlength="6" />
+        </fieldset>
+
+        <fieldset>
+          <legend>Property Details</legend>
+          <label for="property_title">Property Title *</label>
+          <input type="text" id="property_title" name="property_title" required />
+
+          <label for="description">Description *</label>
+          <textarea id="description" name="description" rows="4" required></textarea>
+
+          <label for="price">Price (USD) *</label>
+          <input type="number" id="price" name="price" required min="0" step="any" />
+
+          <label for="location">Location *</label>
+          <input type="text" id="location" name="location" required />
+        </fieldset>
+
+        <fieldset>
+          <legend>Upload Documents</legend>
+          <label for="id_doc">ID Document (PDF, JPG, PNG) *</label>
+          <input type="file" id="id_doc" name="id_doc" accept=".pdf,.jpg,.jpeg,.png" required />
+
+          <label for="title_deed">Title Deed (PDF, JPG, PNG) *</label>
+          <input type="file" id="title_deed" name="title_deed" accept=".pdf,.jpg,.jpeg,.png" required />
+
+          <label for="compliance_cert">Compliance Certificate (PDF, JPG, PNG)</label>
+          <input type="file" id="compliance_cert" name="compliance_cert" accept=".pdf,.jpg,.jpeg,.png" />
+        </fieldset>
+
+        <fieldset>
+          <legend>Property Images</legend>
+          <label for="property_images">Upload up to 5 images (JPG, PNG)</label>
+          <input type="file" id="property_images" name="property_images[]" accept=".jpg,.jpeg,.png" multiple max="5" />
+        </fieldset>
+
+        <button type="submit" class="btn-primary">Register & Upload</button>
+      </form>
+    </section>
+  </main>
+
+  <footer class="footer container">
+    <p>© 2025 Global Property Sales Platform — Contact: support@propertysales.com</p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Edit Profile - Global Property Sales</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <h1 class="logo">🏠 Global Property Sales</h1>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="dashboard.html">Dashboard</a></li>
+          <li><a href="profile.html" class="active">Profile</a></li>
+          <li><a href="listings.html">All Listings</a></li>
+          <li><a href="support.html">Support</a></li>
+          <li><a href="backend/logout.php">Logout</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="container form-section">
+      <h2>Edit Profile</h2>
+      <form id="profileForm" action="backend/update_profile.php" method="POST">
+        <label for="fullname">Full Name *</label>
+        <input type="text" id="fullname" name="fullname" required />
+
+        <label for="email">Email *</label>
+        <input type="email" id="email" name="email" required />
+
+        <label for="details">Car / Property Details</label>
+        <textarea id="details" name="details" rows="4" placeholder="Add extra details..."></textarea>
+
+        <button type="submit" class="btn-primary">Save Changes</button>
+      </form>
+      <div id="message"></div>
+    </section>
+  </main>
+
+  <footer class="footer container">
+    <p>© 2025 Global Property Sales Platform</p>
+  </footer>
+
+  <script>
+    // Load current profile data
+    fetch('backend/get_user_info.php')
+      .then(res => res.json())
+      .then(data => {
+        if(!data.fullname){
+          window.location.href = 'login.html';
+          return;
+        }
+        document.getElementById('fullname').value = data.fullname || '';
+        document.getElementById('email').value = data.email || '';
+        document.getElementById('details').value = data.details || '';
+      })
+      .catch(() => window.location.href = 'login.html');
+
+    // Handle form submission with fetch API (AJAX)
+    document.getElementById('profileForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(e.target);
+      const response = await fetch('backend/update_profile.php', {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await response.text();
+      const msg = document.getElementById('message');
+      if (response.ok) {
+        msg.style.color = 'green';
+        msg.textContent = result;
+      } else {
+        msg.style.color = 'red';
+        msg.textContent = result;
+      }
+    });
+  </script>
+</body>
+</html>
